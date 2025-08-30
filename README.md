@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 Scientific Paper Insight Engine
 ==============================
 
@@ -55,3 +56,7 @@ Project Organization
 --------
 
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
+=======
+# paper_insight_engine
+A data science project that builds a semantic search and summarization tool for academic literature.
+>>>>>>> 480c59a8dfcb9c5eb82500c70a48c44825f50328
