@@ -1,26 +1,52 @@
-# Python
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
-.venv/
-.env
+*$py.class
 
-# Notebooks
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# Jupyter Notebook checkpoints
 .ipynb_checkpoints/
 
-# Data (keep large/local data out of git)
-data/
-datasets/
-*.csv
-*.tsv
-*.parquet
-*.feather
-*.zip
-*.gz
+# VSCode settings
+.vscode/
 
-# OS/IDE
+# Mac / Windows system files
 .DS_Store
 Thumbs.db
-.vscode/
-# Ignore data folder contents, but keep the folder
+
+# Logs
+*.log
+
+# Unit test / coverage reports
+.coverage
+*.cover
+htmlcov/
+
+# Data files (keep folder, ignore contents)
 data/
 !data/.gitkeep
+
+# Models, embeddings, caches
+*.pkl
+*.joblib
+*.npy
+*.npz
+*.h5
+*.pt
+*.pth
+.cache/
+
+# Environment files
+.env
+*.sqlite
