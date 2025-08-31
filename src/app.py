@@ -129,9 +129,9 @@ st.title(" Paper Insight Engine")
 
 mode = st.radio("Search mode", ["Semantic (FAISS)", "TF-IDF (keywords)"])
 top_k = st.slider("Top results", 5, 20, 10)
-alpha = st.slider("Hybrid Î± (semantic weight)", 0.0, 1.0, 0.7)
+alpha = st.slider("Hybrid  (semantic weight)", 0.0, 1.0, 0.7)
 
-query = st.text_input("ðŸ”Ž Enter your search query")
+query = st.text_input(" Enter your search query")
 
 # Sidebar filters
 st.sidebar.header("Filters")
