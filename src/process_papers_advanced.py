@@ -1,9 +1,10 @@
-import json
+﻿import json
 import re
 import unicodedata
 from html import unescape
 from pathlib import Path
-from typing import Dict, List, Optional, Iterable, Tuple
+from typing import Dict, List, Optional, Tuple
+
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 
@@ -24,7 +25,7 @@ try:
         _nlp.enable_pipe("senter") if "senter" in _nlp.pipe_names else None
         _SPACY_OK = True
     except Exception:
-        # Model not present; we’ll fallback later
+        # Model not present; weâ€™ll fallback later
         _SPACY_OK = False
 except Exception:
     _SPACY_OK = False
@@ -42,11 +43,11 @@ def _strip_html(text: str) -> str:
 
 
 def _normalize_unicode(text: str) -> str:
-    """Normalize different unicode forms & entities (– → -, smart quotes, etc.)."""
+    """Normalize different unicode forms & entities (â€“ â†’ -, smart quotes, etc.)."""
     if not text:
         return ""
     text = unicodedata.normalize("NFKC", text)
-    text = unescape(text)  # &nbsp; → space, &amp; → &
+    text = unescape(text)  # &nbsp; â†’ space, &amp; â†’ &
     # Replace fancy dashes/quotes with ASCII-ish equivalents
     text = text.replace("\u2013", "-").replace("\u2014", "-")
     text = text.replace("\u2018", "'").replace("\u2019", "'")
@@ -59,8 +60,8 @@ def _remove_citations_boilerplate(text: str) -> str:
     if not text:
         return ""
     # Common numeric citations
-    text = re.sub(r"\[\s*\d+\s*\]", " ", text)        # [1]
-    text = re.sub(r"\(\s*\d+\s*\)", " ", text)        # (2)
+    text = re.sub(r"\[\s*\d+\s*\]", " ", text)  # [1]
+    text = re.sub(r"\(\s*\d+\s*\)", " ", text)  # (2)
     text = re.sub(r"\[\s*\d+\s*-\s*\d+\s*\]", " ", text)  # [3-5]
     # Author-year-ish (light touch to avoid over-deleting)
     text = re.sub(r"\([A-Z][A-Za-z-]+,?\s*\d{4}\)", " ", text)
@@ -99,7 +100,9 @@ def clean_text(text: str, lemmatize: bool = True) -> str:
         # Lemmatize and drop stopwords if desired (keep stopwords to maintain phrase shape)
         doc = _nlp(text)
         # Conservative: lemmatize but keep stopwords
-        text = " ".join(tok.lemma_ if tok.lemma_ != "-PRON-" else tok.text for tok in doc)
+        text = " ".join(
+            tok.lemma_ if tok.lemma_ != "-PRON-" else tok.text for tok in doc
+        )
         text = re.sub(r"\s+", " ", text).strip().lower()
     else:
         # If no spaCy, just lowercase
@@ -154,7 +157,9 @@ def process_record(rec: Dict) -> Optional[Dict]:
     return out
 
 
-def to_passages(rec: Dict, min_len: int = 25, max_len: int = 1200) -> List[Tuple[str, int, str]]:
+def to_passages(
+    rec: Dict, min_len: int = 25, max_len: int = 1200
+) -> List[Tuple[str, int, str]]:
     """
     Split a cleaned record into sentence-level passages.
     Returns list of (pmid, idx, passage_text).
@@ -198,17 +203,21 @@ def process_file(raw_fp: Path):
         for p in all_passages:
             f.write(json.dumps(p, ensure_ascii=False) + "\n")
 
-    print(f"✅ {raw_fp.name}: {len(cleaned_records)} papers → {out_clean.name}")
-    print(f"✅ {raw_fp.name}: {len(all_passages)} passages → passages/{out_pass.name}")
+    print(f"âœ… {raw_fp.name}: {len(cleaned_records)} papers â†’ {out_clean.name}")
+    print(
+        f"âœ… {raw_fp.name}: {len(all_passages)} passages â†’ passages/{out_pass.name}"
+    )
 
 
 def main():
     raw_files = sorted(RAW_DATA_DIR.glob("pubmed_*.jsonl"))
     if not raw_files:
-        print("❌ No raw files found in data/raw/. Run ingestion first.")
+        print("âŒ No raw files found in data/raw/. Run ingestion first.")
         return
 
-    print(f"Processing {len(raw_files)} raw file(s)... (spaCy={'ON' if _SPACY_OK else 'OFF'})")
+    print(
+        f"Processing {len(raw_files)} raw file(s)... (spaCy={'ON' if _SPACY_OK else 'OFF'})"
+    )
     for fp in tqdm(raw_files, desc="Files"):
         process_file(fp)
 

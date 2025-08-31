@@ -1,13 +1,11 @@
-import json
+﻿import json
 import re
 from pathlib import Path
-from typing import List, Dict
+from typing import Dict, List
 
-import numpy as np
-from termcolor import colored
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-
+from termcolor import colored
 
 KEYWORDS_DATA_DIR = Path("data/keywords")
 SEARCH_EXPORT_PATH = Path("data/search_results.json")
@@ -104,11 +102,11 @@ def main():
     # 1) load data
     kw_files = list(KEYWORDS_DATA_DIR.glob("keywords_*.jsonl"))
     if not kw_files:
-        print("❌ No keyword files found. Run extract_keywords.py first.")
+        print("âŒ No keyword files found. Run extract_keywords.py first.")
         return
 
     file_path = kw_files[0]
-    print(f"📂 Loading {file_path} ...")
+    print(f"ðŸ“‚ Loading {file_path} ...")
     papers = load_papers(file_path)
 
     # 2) build index
@@ -116,7 +114,9 @@ def main():
 
     # 3) interactive loop
     while True:
-        query = input("\n🔎 Enter your search query (or type 'exit' to quit): ").strip()
+        query = input(
+            "\nðŸ”Ž Enter your search query (or type 'exit' to quit): "
+        ).strip()
         if query.lower() == "exit":
             break
         if not query:
@@ -131,21 +131,21 @@ def main():
             title = highlight(r["title"], q_terms)
             abstract_snippet = highlight(r["abstract"][:300], q_terms)
 
-            print(f"\n[{i}] 📖 {title}")
-            print(f"    ⭐ Score: {r['score']:.4f}")
-            print(f"    📝 Keywords: {', '.join(r.get('keywords', []))}")
-            print(f"    📄 Abstract: {abstract_snippet}...")
+            print(f"\n[{i}] ðŸ“– {title}")
+            print(f"    â­ Score: {r['score']:.4f}")
+            print(f"    ðŸ“ Keywords: {', '.join(r.get('keywords', []))}")
+            print(f"    ðŸ“„ Abstract: {abstract_snippet}...")
 
         # summary
         summary = summarize_results(results, query, top_n=3)
-        print("\n📝 Summary of top results:")
+        print("\nðŸ“ Summary of top results:")
         print(summary)
 
         # export
         SEARCH_EXPORT_PATH.parent.mkdir(parents=True, exist_ok=True)
         with open(SEARCH_EXPORT_PATH, "w", encoding="utf-8") as f:
             json.dump(results, f, indent=2, ensure_ascii=False)
-        print(f"\n💾 Results saved to {SEARCH_EXPORT_PATH}")
+        print(f"\nðŸ’¾ Results saved to {SEARCH_EXPORT_PATH}")
 
 
 if __name__ == "__main__":

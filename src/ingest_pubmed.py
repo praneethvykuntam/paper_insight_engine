@@ -1,8 +1,9 @@
-import os
 import json
+import os
 from pathlib import Path
 from time import sleep
 from typing import List
+
 from Bio import Entrez
 
 # Load credentials from env
@@ -13,7 +14,9 @@ DATA_DIR = Path("data/raw")
 DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 
-def fetch_papers(query: str, max_results: int = 2000, batch_size: int = 500) -> List[dict]:
+def fetch_papers(
+    query: str, max_results: int = 2000, batch_size: int = 500
+) -> List[dict]:
     """Fetch PubMed papers for a given query in batches."""
     results = []
     handle = Entrez.esearch(db="pubmed", term=query, retmax=max_results, usehistory="y")
@@ -23,7 +26,9 @@ def fetch_papers(query: str, max_results: int = 2000, batch_size: int = 500) -> 
     webenv = search_results["WebEnv"]
     query_key = search_results["QueryKey"]
     total_count = int(search_results["Count"])
-    print(f"🔍 Query: {query} → Found {total_count} results (fetching up to {max_results})")
+    print(
+        f"🔍 Query: {query} → Found {total_count} results (fetching up to {max_results})"
+    )
 
     fetched = 0
     while fetched < min(total_count, max_results):

@@ -1,13 +1,16 @@
-import streamlit as st
-import json, re
+﻿import json
+import re
+from collections import defaultdict
 from datetime import datetime
-import numpy as np
+
 import faiss
+import numpy as np
+import streamlit as st
+from rapidfuzz import fuzz
 from sentence_transformers import SentenceTransformer
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-from rapidfuzz import fuzz
-from collections import defaultdict
+
 
 # -----------------------------
 # Helper functions
@@ -28,6 +31,7 @@ def keyword_overlap_score(text: str, query: str) -> float:
                     break
     return hits / len(q_terms)
 
+
 def hybrid_rerank(candidates, query, alpha=0.7):
     out = []
     for c in candidates:
@@ -37,7 +41,10 @@ def hybrid_rerank(candidates, query, alpha=0.7):
     out.sort(key=lambda x: x["hybrid_score"], reverse=True)
     return out
 
-def filter_results(results, year_min, year_max, include_terms, exclude_terms, journal_filter):
+
+def filter_results(
+    results, year_min, year_max, include_terms, exclude_terms, journal_filter
+):
     filtered = []
     for r in results:
         # Year filter
@@ -45,7 +52,7 @@ def filter_results(results, year_min, year_max, include_terms, exclude_terms, jo
         if r.get("pub_date"):
             try:
                 year = int(r["pub_date"].split("-")[0])
-            except:
+            except (KeyError, ValueError, AttributeError):
                 year = None
         if year and (year < year_min or year > year_max):
             continue
@@ -72,6 +79,7 @@ def filter_results(results, year_min, year_max, include_terms, exclude_terms, jo
         filtered.append(r)
     return filtered
 
+
 def highlight_text(text: str, query: str) -> str:
     """Highlight query terms (and fuzzy variants) in passage or summary text."""
     terms = [w for w in re.findall(r"\w+", query.lower()) if len(w) > 2]
@@ -88,6 +96,7 @@ def highlight_text(text: str, query: str) -> str:
 
     return re.sub(r"\w+", repl, text, flags=re.IGNORECASE)
 
+
 def dedup_by_paper(results):
     """Collapse multiple passages from the same paper into one entry with snippets."""
     grouped = defaultdict(list)
@@ -103,6 +112,7 @@ def dedup_by_paper(results):
         deduped.append(r)
     return deduped
 
+
 def summarize_results(results):
     """Naive extractive summary from top 3 snippets."""
     snippets = []
@@ -111,20 +121,23 @@ def summarize_results(results):
     text = " ".join(snippets[:5])
     return text if text else "No summary available."
 
+
 # -----------------------------
 # Streamlit UI
 # -----------------------------
-st.title("📚 Paper Insight Engine")
+st.title("ðŸ“š Paper Insight Engine")
 
 mode = st.radio("Search mode", ["Semantic (FAISS)", "TF-IDF (keywords)"])
 top_k = st.slider("Top results", 5, 20, 10)
-alpha = st.slider("Hybrid α (semantic weight)", 0.0, 1.0, 0.7)
+alpha = st.slider("Hybrid Î± (semantic weight)", 0.0, 1.0, 0.7)
 
-query = st.text_input("🔎 Enter your search query")
+query = st.text_input("ðŸ”Ž Enter your search query")
 
 # Sidebar filters
 st.sidebar.header("Filters")
-year_min, year_max = st.sidebar.slider("Publication Year Range", 1990, datetime.now().year, (2015, datetime.now().year))
+year_min, year_max = st.sidebar.slider(
+    "Publication Year Range", 1990, datetime.now().year, (2015, datetime.now().year)
+)
 journal_kw = st.sidebar.text_input("Journal contains (comma separated)")
 journal_filter = [j.strip() for j in journal_kw.split(",") if j.strip()]
 include_kw = st.sidebar.text_input("Must include terms (comma separated)")
@@ -136,12 +149,14 @@ if query:
     # Load FAISS + metadata
     index = faiss.read_index("data/semantic/faiss.index")
     with open("data/semantic/meta.jsonl", "r", encoding="utf-8") as f:
-        meta = [json.loads(l) for l in f]
+        meta = [json.loads(line) for line in f]
 
     model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
 
     if mode == "Semantic (FAISS)":
-        qv = model.encode([query], normalize_embeddings=True, convert_to_numpy=True).astype(np.float32)
+        qv = model.encode(
+            [query], normalize_embeddings=True, convert_to_numpy=True
+        ).astype(np.float32)
         sims, ids = index.search(qv, top_k * 20)
         sims, ids = sims[0], ids[0]
         candidates = []
@@ -149,16 +164,20 @@ if query:
             if idx == -1:
                 continue
             m = meta[idx]
-            candidates.append({
-                "score": float(score),
-                "pmid": m["pmid"],
-                "title": m.get("title", ""),
-                "journal": m.get("journal", ""),
-                "pub_date": m.get("pub_date", ""),
-                "passage": m.get("passage", ""),
-            })
+            candidates.append(
+                {
+                    "score": float(score),
+                    "pmid": m["pmid"],
+                    "title": m.get("title", ""),
+                    "journal": m.get("journal", ""),
+                    "pub_date": m.get("pub_date", ""),
+                    "passage": m.get("passage", ""),
+                }
+            )
         ranked = hybrid_rerank(candidates, query, alpha)
-        results = filter_results(ranked, year_min, year_max, include_terms, exclude_terms, journal_filter)
+        results = filter_results(
+            ranked, year_min, year_max, include_terms, exclude_terms, journal_filter
+        )
 
     else:  # TF-IDF
         corpus = [r["passage"] for r in meta]
@@ -166,19 +185,23 @@ if query:
         X = vectorizer.fit_transform(corpus)
         qv = vectorizer.transform([query])
         sims = cosine_similarity(qv, X).flatten()
-        ranked_ids = sims.argsort()[::-1][:top_k*20]
+        ranked_ids = sims.argsort()[::-1][: top_k * 20]
         results = []
         for idx in ranked_ids:
             m = meta[idx]
-            results.append({
-                "score": float(sims[idx]),
-                "pmid": m["pmid"],
-                "title": m.get("title", ""),
-                "journal": m.get("journal", ""),
-                "pub_date": m.get("pub_date", ""),
-                "passage": m.get("passage", ""),
-            })
-        results = filter_results(results, year_min, year_max, include_terms, exclude_terms, journal_filter)
+            results.append(
+                {
+                    "score": float(sims[idx]),
+                    "pmid": m["pmid"],
+                    "title": m.get("title", ""),
+                    "journal": m.get("journal", ""),
+                    "pub_date": m.get("pub_date", ""),
+                    "passage": m.get("passage", ""),
+                }
+            )
+        results = filter_results(
+            results, year_min, year_max, include_terms, exclude_terms, journal_filter
+        )
 
     # Deduplicate
     deduped = dedup_by_paper(results)
@@ -186,15 +209,20 @@ if query:
     # Summary
     summary = summarize_results(deduped)
     summary_hl = highlight_text(summary, query)
-    st.subheader("📝 Summary")
+    st.subheader("ðŸ“ Summary")
     st.markdown(summary_hl, unsafe_allow_html=True)
 
     # Display results
     st.subheader("Top results")
     for i, r in enumerate(deduped[:top_k], 1):
-        snippets_hl = " ".join([highlight_text(s, query) for s in r.get("snippets", [])])
-        st.markdown(f"""
+        snippets_hl = " ".join(
+            [highlight_text(s, query) for s in r.get("snippets", [])]
+        )
+        st.markdown(
+            f"""
         **[{i}] {r['title']}**  
-        🏷️ PMID: {r['pmid']} • {r['journal']} • {r['pub_date']}  
-        📄 {snippets_hl}  
-        """, unsafe_allow_html=True)
+        ðŸ·ï¸ PMID: {r['pmid']} â€¢ {r['journal']} â€¢ {r['pub_date']}  
+        ðŸ“„ {snippets_hl}  
+        """,
+            unsafe_allow_html=True,
+        )

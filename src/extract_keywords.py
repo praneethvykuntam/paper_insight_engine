@@ -1,11 +1,13 @@
 import json
 from pathlib import Path
-from sklearn.feature_extraction.text import TfidfVectorizer
+
 import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
 
 PROCESSED_DATA_DIR = Path("data/processed")
 OUTPUT_DATA_DIR = Path("data/keywords")
 OUTPUT_DATA_DIR.mkdir(parents=True, exist_ok=True)
+
 
 def load_papers(file_path: Path):
     papers = []
@@ -13,6 +15,7 @@ def load_papers(file_path: Path):
         for line in f:
             papers.append(json.loads(line))
     return papers
+
 
 def extract_keywords_tfidf(papers, top_n=10):
     abstracts = [p.get("abstract", "") for p in papers]
@@ -29,6 +32,7 @@ def extract_keywords_tfidf(papers, top_n=10):
         results.append(paper)
     return results
 
+
 def process_file(input_file: Path, output_file: Path, top_n=10):
     papers = load_papers(input_file)
     enriched = extract_keywords_tfidf(papers, top_n=top_n)
@@ -37,10 +41,14 @@ def process_file(input_file: Path, output_file: Path, top_n=10):
             f.write(json.dumps(record) + "\n")
     print(f"✅ Keywords extracted for {len(enriched)} papers → {output_file}")
 
+
 def main():
     for processed_file in PROCESSED_DATA_DIR.glob("processed_*.jsonl"):
-        output_file = OUTPUT_DATA_DIR / processed_file.name.replace("processed_", "keywords_")
+        output_file = OUTPUT_DATA_DIR / processed_file.name.replace(
+            "processed_", "keywords_"
+        )
         process_file(processed_file, output_file, top_n=10)
+
 
 if __name__ == "__main__":
     main()
