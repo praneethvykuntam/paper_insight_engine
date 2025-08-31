@@ -45,7 +45,7 @@ The engine doesn’t just list results — it **prioritizes the most relevant on
 - Surfaces the most important work first.  
 
 📊 *Figure 2: Example search results in the dashboard (screenshot of Streamlit app)*  
-![Figure 2](docs/images/figure 2.png) 
+![Figure 2: Example search results](docs/images/figure2.png)
 
 ---
 
@@ -53,8 +53,8 @@ The engine doesn’t just list results — it **prioritizes the most relevant on
 All of this is wrapped in a clean and easy-to-use dashboard. You don’t need coding skills — just type a question and explore the results.  
 
 📊 *Figure 3: Search interface with filters*  
-![Figure 3](docs/images/figure 3.png)
-![Figure 3.1](docs/images/figure 3.1.png)
+![Figure 3: Search interface](docs/images/figure3.png)
+![Figure 3.1: Search results highlighted](docs/images/figure3_1.png)
 
 ---
 
@@ -93,7 +93,7 @@ The first version uses **PubMed abstracts and metadata**. This ensures high-qual
 - 🔲 Release a hosted demo version for wider access.  
 
 📊 *Figure 4: Project workflow diagram (data → indexing → search → results)*  
-![Figure 4](docs/images/figure 4.png)  
+![Figure 4: Workflow](docs/images/figure4_workflow.png) 
 
 ---
 
