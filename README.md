@@ -23,7 +23,9 @@ The main goal of the Paper Insight Engine is to **help people discover the right
 We start by gathering papers from **PubMed**, a trusted biomedical source. Raw data can be messy, so we clean and organize it — similar to arranging books neatly in a library.  
 
 📊 *Figure 1: Overview of collected papers (example visualization of publication years or keyword distribution)*  
-![Figure 1](docs/images/figure1_publication_overview.png)  
+ Figure 1: Overview of collected papers
+![Overview of collected papers](docs/images/figure1_overview.png)
+ 
 
 ---
 
@@ -43,7 +45,7 @@ The engine doesn’t just list results — it **prioritizes the most relevant on
 - Surfaces the most important work first.  
 
 📊 *Figure 2: Example search results in the dashboard (screenshot of Streamlit app)*  
-![Figure 2](docs/images/figure2_search_results.png)  
+![Figure 2](docs/images/figure2.png) 
 
 ---
 
@@ -51,7 +53,8 @@ The engine doesn’t just list results — it **prioritizes the most relevant on
 All of this is wrapped in a clean and easy-to-use dashboard. You don’t need coding skills — just type a question and explore the results.  
 
 📊 *Figure 3: Search interface with filters*  
-![Figure 3](docs/images/figure3_ui_filters.png)  
+![Figure 3](docs/images/figure3.png)
+![Figure 3.1](docs/images/figure3.1.png)
 
 ---
 
@@ -72,28 +75,6 @@ All of this is wrapped in a clean and easy-to-use dashboard. You don’t need co
 
 ---
 
-## 📂 Repository Structure  
-paper_insight_engine/
-│
-├── src/ # Core code (ingestion, processing, search, UI)
-│ ├── data/ # Data-related utilities
-│ ├── features/ # Feature engineering helpers
-│ ├── models/ # Model training and inference
-│ ├── visualization/ # Plotting and visualization tools
-│ ├── app.py # Streamlit app
-│ └── ... # Other scripts
-│
-├── notebooks/ # Jupyter notebooks for experiments
-├── data/ # Data folder (ignored in Git, only .gitkeep tracked)
-├── docs/ # Documentation
-│ └── images/ # Figures and screenshots
-├── tests/ # Unit tests
-├── requirements.txt # Project dependencies
-├── setup.py # Package setup
-└── README.md # Project overview
-
-
-
 ---
 
 ## 📑 Dataset Source  
@@ -112,7 +93,7 @@ The first version uses **PubMed abstracts and metadata**. This ensures high-qual
 - 🔲 Release a hosted demo version for wider access.  
 
 📊 *Figure 4: Project workflow diagram (data → indexing → search → results)*  
-![Figure 4](docs/images/figure4_workflow.png)  
+![Figure 4](docs/images/figure 4.png)  
 
 ---
 

@@ -209,7 +209,7 @@ if query:
     # Summary
     summary = summarize_results(deduped)
     summary_hl = highlight_text(summary, query)
-    st.subheader("ðŸ“ Summary")
+    st.subheader(" Summary")
     st.markdown(summary_hl, unsafe_allow_html=True)
 
     # Display results
@@ -221,8 +221,8 @@ if query:
         st.markdown(
             f"""
         **[{i}] {r['title']}**  
-        ðŸ·ï¸ PMID: {r['pmid']} â€¢ {r['journal']} â€¢ {r['pub_date']}  
-        ðŸ“„ {snippets_hl}  
+         PMID: {r['pmid']}  {r['journal']} {r['pub_date']}  
+         {snippets_hl}  
         """,
             unsafe_allow_html=True,
         )
