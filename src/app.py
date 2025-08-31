@@ -125,7 +125,7 @@ def summarize_results(results):
 # -----------------------------
 # Streamlit UI
 # -----------------------------
-st.title("ðŸ“š Paper Insight Engine")
+st.title(" Paper Insight Engine")
 
 mode = st.radio("Search mode", ["Semantic (FAISS)", "TF-IDF (keywords)"])
 top_k = st.slider("Top results", 5, 20, 10)
