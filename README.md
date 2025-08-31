@@ -1,4 +1,4 @@
-# 📄 Paper Insight Engine  
+# Paper Insight Engine  
 
 The **Paper Insight Engine** is a project built to make searching and learning from research papers easier and faster. Every day, thousands of new studies are published. For students, researchers, and professionals, this creates a huge challenge: *how do you keep up without drowning in information?*  
 
